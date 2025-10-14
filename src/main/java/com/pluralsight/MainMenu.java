@@ -1,5 +1,10 @@
 package com.pluralsight;
 
+import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Scanner;
 
 public class MainMenu {
@@ -28,10 +33,54 @@ public class MainMenu {
 
     }
     private static void addDeposit(){
+        System.out.print("Enter description: ");
+        String description  = scanner.nextLine();
+        System.out.print("Enter vendor: ");
+        String vendor = scanner.nextLine();
+        System.out.print("Enter amount: ");
+        double amount = scanner.nextDouble();
+        LocalDateTime dateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd|HH:mm:ss");
+        String formattedDate = dateTime.format(formatter);
+        try{
+            FileWriter fileWriter = new FileWriter("transactions.csv", true);
+            BufferedWriter bufWriter = new BufferedWriter(fileWriter);
+            String line = formattedDate + "|" + description + "|" + vendor + "|" + String.format("%.2f", amount);
+            bufWriter.write(line);
+            bufWriter.write("\n");
+            bufWriter.close();
+        }
+        catch (IOException e){
+            System.out.println("An unexpected error occurred");
+            e.printStackTrace();
+        }
 
     }
     private static void makePayment(){
-
+        System.out.print("Enter description: ");
+        String description  = scanner.nextLine();
+        System.out.print("Enter vendor: ");
+        String vendor = scanner.nextLine();
+        System.out.print("Enter amount: ");
+        double amount = scanner.nextDouble();
+        if (amount>0){
+            amount = -amount;
+        }
+        LocalDateTime dateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd|HH:mm:ss");
+        String formattedDate = dateTime.format(formatter);
+        try{
+            FileWriter fileWriter = new FileWriter("transactions.csv", true);
+            BufferedWriter bufWriter = new BufferedWriter(fileWriter);
+            String line = formattedDate + "|" + description + "|" + vendor + "|" + String.format("%.2f", amount);
+            bufWriter.write(line);
+            bufWriter.write("\n");
+            bufWriter.close();
+        }
+        catch (IOException e) {
+            System.out.println("An unexpected error occurred");
+            e.printStackTrace();
+        }
     }
     private static void displayLedgerScreen(){
         boolean running = true;
@@ -55,14 +104,13 @@ public class MainMenu {
             }
         }
     }
+    // needs attention!
     public static void displayAllEntries(){
-
     }
     public static void deposits(){
 
     }
     public static void negativeEntries(){
-
     }
     public static void reports(){
         boolean running = true;

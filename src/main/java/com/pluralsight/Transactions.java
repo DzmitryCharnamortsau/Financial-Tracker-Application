@@ -23,25 +23,25 @@ public class Transactions {
      public String getTime(){
         return time;
      }
-     public void setTime(){
+     public void setTime(String time){
         this.time = time;
      }
      public String getDescription(){
         return description;
      }
-     public void setDescription(){
+     public void setDescription(String description){
         this.description = description;
      }
      public String getVendor(){
         return vendor;
      }
-     public void setVendor(){
+     public void setVendor(String vendor){
         this.vendor = vendor;
      }
      public double getAmount(){
         return this.amount;
      }
-     public void setAmount(){
+     public void setAmount(double amount){
         this.amount = amount;
      }
 }
