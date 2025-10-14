@@ -104,7 +104,6 @@ public class MainMenu {
             }
         }
     }
-    // needs attention!
     public static void displayAllEntries(){
     }
     public static void deposits(){
