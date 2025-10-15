@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class MainMenu {
     private static final Scanner scanner = new Scanner(System.in);
@@ -105,11 +106,72 @@ public class MainMenu {
         }
     }
     public static void displayAllEntries(){
+        ArrayList<String> entries = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            String line;
+            while((line = reader.readLine()) != null) {
+                entries.add(line);
+            }
+            reader.close();
+            for (int i = entries.size()-1; i>=0; i--){
+                System.out.println(entries.get(i));
+            }
+        }
+        catch (IOException e) {
+            System.out.println("An unexpected error occurred");
+            e.printStackTrace();
+        }
     }
     public static void deposits(){
-
+        ArrayList<Transactions> list = new ArrayList<>();
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            String line;
+            while((line = reader.readLine()) != null){
+                String [] parts = line.split(Pattern.quote("|"));
+                if (parts.length == 5) {
+                    double amount = Double.parseDouble(parts[4]);
+                    if (amount > 0) {
+                        Transactions t = new Transactions(parts[0],parts[1], parts[2],parts[3], amount);
+                        list.add(t);
+                    }
+                }
+            }
+            for (int i = list.size() - 1; i >= 0; i--) {
+                Transactions t = list.get(i);
+                System.out.printf("%s|%s|%s|%s|%.2f\n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+            }
+        }
+        catch(IOException e){
+            System.out.println("An unexpected error occurred");
+            e.printStackTrace();
+        }
     }
     public static void negativeEntries(){
+        ArrayList<Transactions> list = new ArrayList<>();
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            String line;
+            while((line = reader.readLine()) != null){
+                String [] parts = line.split(Pattern.quote("|"));
+                if (parts.length == 5) {
+                    double amount = Double.parseDouble(parts[4]);
+                    if (amount < 0) {
+                        Transactions t = new Transactions(parts[0],parts[1], parts[2],parts[3], amount);
+                        list.add(t);
+                    }
+                }
+            }
+            for (int i = list.size() - 1; i >= 0; i--) {
+                Transactions t = list.get(i);
+                System.out.printf("%s|%s|%s|%s|%.2f\n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+            }
+        }
+        catch(IOException e){
+            System.out.println("An unexpected error occurred");
+            e.printStackTrace();
+        }
     }
     public static void reports(){
         boolean running = true;
