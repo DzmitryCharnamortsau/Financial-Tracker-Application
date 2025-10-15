@@ -1,10 +1,10 @@
 package com.pluralsight;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -198,18 +198,136 @@ public class MainMenu {
         }
     }
     public static void monthToDate(){
-
+        String currentMonth = String.valueOf(LocalDate.now().getMonth());
+        boolean found = false;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(Pattern.quote("|"));
+                if (parts.length == 5) {
+                    if (parts[0].startsWith(currentMonth)) {
+                        System.out.println(line);
+                        found = true;
+                    }
+                }
+            }
+            if(!found) {
+                System.out.println("No transactions found for this month.");
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("An unexpected error occurred");
+            e.printStackTrace();
+        }
     }
     public static void previousMonth(){
-
+        String previousMonth = String.valueOf(LocalDate.now().getMonth().minus(1));
+        boolean found = false;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(Pattern.quote("|"));
+                if (parts.length == 5) {
+                    if (parts[0].startsWith(previousMonth)) {
+                        System.out.println(line);
+                        found = true;
+                    }
+                }
+            }
+            if(!found) {
+                System.out.println("No transactions found for this month.");
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("An unexpected error occurred");
+            e.printStackTrace();
+        }
     }
     public static void yearToDate(){
-
+        String currentYear = String.valueOf(LocalDate.now().getYear());
+        boolean found = false;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(Pattern.quote("|"));
+                if (parts.length == 5) {
+                    if (parts[0].startsWith(currentYear)) {
+                        System.out.println(line);
+                        found = true;
+                    }
+                }
+            }
+            if(!found) {
+                System.out.println("No transactions found for this year.");
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("An unexpected error occurred");
+            e.printStackTrace();
+        }
     }
     public static void previousYear(){
-
+        String previousYear = String.valueOf(LocalDate.now().getYear() - 1);
+        boolean found = false;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(Pattern.quote("|"));
+                if (parts.length == 5) {
+                    if (parts[0].startsWith(previousYear)) {
+                        System.out.println(line);
+                        found = true;
+                    }
+                }
+            }
+            if(!found) {
+                System.out.println("No transactions found for this year.");
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("An unexpected error occurred");
+            e.printStackTrace();
+        }
     }
     public static void searchByVendor(){
+        System.out.print("Enter a vendor name ");
+        String vendorName = scanner.nextLine().toLowerCase();
+        ArrayList<Transactions> list = new ArrayList<>();
+        boolean found = false;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(Pattern.quote("|"));
+                if (parts.length == 5) {
+                    String vendor = parts[3].toLowerCase();
+                    if (vendor.contains(vendorName)) {
+                        double amount = Double.parseDouble(parts[4]);
+                        Transactions t = new Transactions(parts[0], parts[1], parts[2], parts[3], amount);
+                        list.add(t);
+                        found = true;
+                    }
+                }
+            }
+            reader.close();
+            if (!found) {
+                System.out.println("No transactions found for " + vendorName);
+            } else {
+                for (int i = list.size() - 1; i >= 0; i--) {
+                    Transactions t = list.get(i);
+                    System.out.printf("%s|%s|%s|%s|%.2f\n",
+                            t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.println("An unexpected error occurred");
+            e.printStackTrace();
+        }
 
     }
 
