@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -140,16 +141,22 @@ public class MainMenu {
         }
     }
     public static void displayAllEntries(){
-        ArrayList<String> entries = new ArrayList<>();
+        ArrayList<Transactions> list = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
             while((line = reader.readLine()) != null) {
-                entries.add(line);
+                String [] parts = line.split(Pattern.quote("|"));
+                if (parts.length == 5) {
+                    double amount = Double.parseDouble(parts[4]);
+                    Transactions t = new Transactions(parts[0], parts[1], parts[2], parts[3], amount);
+                    list.add(t);
+                }
             }
             reader.close();
-            for (int i = entries.size()-1; i>=0; i--){
-                System.out.println(entries.get(i));
+            Collections.reverse(list); // reverse once
+            for (Transactions t : list) {
+                System.out.println(t.toString());
             }
         }
         catch (IOException e) {
@@ -172,8 +179,8 @@ public class MainMenu {
                     }
                 }
             }
-            for (int i = list.size() - 1; i >= 0; i--) {
-                Transactions t = list.get(i);
+            Collections.reverse(list);
+            for (Transactions t : list) {
                 System.out.println(t.toString());
             }
         }
@@ -197,8 +204,8 @@ public class MainMenu {
                     }
                 }
             }
-            for (int i = list.size() - 1; i >= 0; i--) {
-                Transactions t = list.get(i);
+            Collections.reverse(list);
+            for (Transactions t : list) {
                 System.out.println(t.toString());
             }
         }
