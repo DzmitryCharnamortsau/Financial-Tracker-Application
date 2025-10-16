@@ -58,6 +58,7 @@ public class MainMenu {
             bufWriter.write(line);
             bufWriter.write("\n");
             bufWriter.close();
+            System.out.println("Changes saved");
         }
         catch (IOException e){
             System.out.println("An unexpected error occurred");
@@ -89,6 +90,7 @@ public class MainMenu {
             bufWriter.write(line);
             bufWriter.write("\n");
             bufWriter.close();
+            System.out.println("Changes saved");
         }
         catch (IOException e) {
             System.out.println("An unexpected error occurred");
