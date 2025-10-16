@@ -2,7 +2,7 @@ package com.pluralsight;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -10,12 +10,14 @@ import java.util.regex.Pattern;
 
 public class MainMenu {
     private static final Scanner scanner = new Scanner(System.in);
+    private static final String transactionsFile = "transactions.csv";
     public static void homeScreen(){
         boolean running = true;
         while(running){
             System.out.println("Choose one of the following options: ");
             System.out.println("D) Add Deposit");
             System.out.println("P) Make payment(Debit)");
+            System.out.println("B) Balance");
             System.out.println("L) Display the ledger screen");
             System.out.println("X) Exit");
             char input = scanner.next().toUpperCase().charAt(0);
@@ -24,6 +26,7 @@ public class MainMenu {
             switch(input){
                 case 'D' -> addDeposit();
                 case 'P' -> makePayment();
+                case 'B' -> totalBalance();
                 case 'L' -> displayLedgerScreen();
                 case 'X' -> {running = false;
                     System.out.println("Closing the application");
@@ -40,13 +43,17 @@ public class MainMenu {
         String vendor = scanner.nextLine();
         System.out.print("Enter amount: ");
         double amount = scanner.nextDouble();
-        LocalDateTime dateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd|HH:mm:ss");
-        String formattedDate = dateTime.format(formatter);
+        scanner.nextLine();
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String formattedDate = date.format(dateFormatter);
+        String formattedTime = time.format(timeFormatter);
         try{
-            FileWriter fileWriter = new FileWriter("transactions.csv", true);
+            FileWriter fileWriter = new FileWriter(transactionsFile, true);
             BufferedWriter bufWriter = new BufferedWriter(fileWriter);
-            String line = formattedDate + "|" + description + "|" + vendor + "|" + String.format("%.2f", amount);
+            String line = formattedDate + "|" + formattedTime + "|" + description + "|" + vendor + "|" + String.format("%.2f", amount);
             bufWriter.write(line);
             bufWriter.write("\n");
             bufWriter.close();
@@ -64,21 +71,48 @@ public class MainMenu {
         String vendor = scanner.nextLine();
         System.out.print("Enter amount: ");
         double amount = scanner.nextDouble();
+        scanner.nextLine();
         if (amount>0){
             amount = -amount;
         }
-        LocalDateTime dateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd|HH:mm:ss");
-        String formattedDate = dateTime.format(formatter);
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String formattedDate = date.format(dateFormatter);
+        String formattedTime = time.format(timeFormatter);
         try{
-            FileWriter fileWriter = new FileWriter("transactions.csv", true);
+            FileWriter fileWriter = new FileWriter(transactionsFile, true);
             BufferedWriter bufWriter = new BufferedWriter(fileWriter);
-            String line = formattedDate + "|" + description + "|" + vendor + "|" + String.format("%.2f", amount);
+            String line = formattedDate + "|" + formattedTime + "|" + description + "|" + vendor + "|" + String.format("%.2f", amount);
             bufWriter.write(line);
             bufWriter.write("\n");
             bufWriter.close();
         }
         catch (IOException e) {
+            System.out.println("An unexpected error occurred");
+            e.printStackTrace();
+        }
+    }
+    private static void totalBalance(){
+        double balance = 0;
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(Pattern.quote("|"));
+                if (parts.length == 5) {
+                    try {
+                        double amount = Double.parseDouble(parts[4]);
+                        balance += amount;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid amount in line: " + line);
+                    }
+                }
+            }
+            System.out.printf("Total Balance: %.2f\n", balance);
+        }
+        catch(IOException e){
             System.out.println("An unexpected error occurred");
             e.printStackTrace();
         }
@@ -108,7 +142,7 @@ public class MainMenu {
     public static void displayAllEntries(){
         ArrayList<String> entries = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
             while((line = reader.readLine()) != null) {
                 entries.add(line);
@@ -126,7 +160,7 @@ public class MainMenu {
     public static void deposits(){
         ArrayList<Transactions> list = new ArrayList<>();
         try{
-            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
             while((line = reader.readLine()) != null){
                 String [] parts = line.split(Pattern.quote("|"));
@@ -140,7 +174,7 @@ public class MainMenu {
             }
             for (int i = list.size() - 1; i >= 0; i--) {
                 Transactions t = list.get(i);
-                System.out.printf("%s|%s|%s|%s|%.2f\n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                System.out.println(t.toString());
             }
         }
         catch(IOException e){
@@ -151,7 +185,7 @@ public class MainMenu {
     public static void negativeEntries(){
         ArrayList<Transactions> list = new ArrayList<>();
         try{
-            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
             while((line = reader.readLine()) != null){
                 String [] parts = line.split(Pattern.quote("|"));
@@ -165,7 +199,7 @@ public class MainMenu {
             }
             for (int i = list.size() - 1; i >= 0; i--) {
                 Transactions t = list.get(i);
-                System.out.printf("%s|%s|%s|%s|%.2f\n", t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                System.out.println(t.toString());
             }
         }
         catch(IOException e){
@@ -198,10 +232,10 @@ public class MainMenu {
         }
     }
     public static void monthToDate(){
-        String currentMonth = String.valueOf(LocalDate.now().getMonth());
+        String currentMonth = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
         boolean found = false;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(Pattern.quote("|"));
@@ -222,10 +256,10 @@ public class MainMenu {
         }
     }
     public static void previousMonth(){
-        String previousMonth = String.valueOf(LocalDate.now().getMonth().minus(1));
+        String previousMonth = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM"));
         boolean found = false;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(Pattern.quote("|"));
@@ -249,7 +283,7 @@ public class MainMenu {
         String currentYear = String.valueOf(LocalDate.now().getYear());
         boolean found = false;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(Pattern.quote("|"));
@@ -273,7 +307,7 @@ public class MainMenu {
         String previousYear = String.valueOf(LocalDate.now().getYear() - 1);
         boolean found = false;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(Pattern.quote("|"));
@@ -299,7 +333,7 @@ public class MainMenu {
         ArrayList<Transactions> list = new ArrayList<>();
         boolean found = false;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+            BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(Pattern.quote("|"));
@@ -319,8 +353,7 @@ public class MainMenu {
             } else {
                 for (int i = list.size() - 1; i >= 0; i--) {
                     Transactions t = list.get(i);
-                    System.out.printf("%s|%s|%s|%s|%.2f\n",
-                            t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                    System.out.println(t.toString());
                 }
             }
 
