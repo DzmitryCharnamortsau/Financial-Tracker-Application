@@ -12,5 +12,5 @@ Application that tracks all financial transactions for a business or for persona
      * Predefined reports
   * Shows total balance on request
 
-![](differentScreens.png)
-![](newFeature.png)
+![Shows different screens](differentScreens.png)
+![Shows total balance](newFeature.png)
