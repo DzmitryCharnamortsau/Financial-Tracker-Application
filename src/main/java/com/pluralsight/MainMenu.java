@@ -113,7 +113,7 @@ public class MainMenu {
                     }
                 }
             }
-            System.out.printf("Total Balance: %.2f\n", balance);
+            System.out.printf("Total Balance: $%.2f\n", balance);
         }
         catch(IOException e){
             System.out.println("An unexpected error occurred");
@@ -156,7 +156,7 @@ public class MainMenu {
                 }
             }
             reader.close();
-            Collections.reverse(list); // reverse once
+            Collections.reverse(list);
             for (Transactions t : list) {
                 System.out.println(t.toString());
             }
