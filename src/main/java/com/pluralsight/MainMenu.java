@@ -13,6 +13,7 @@ public class MainMenu {
     private static final Scanner scanner = new Scanner(System.in);
     private static final String transactionsFile = "transactions.csv";
     public static void homeScreen(){
+        System.out.println(" Welcome to your Financial Tracker!");
         boolean running = true;
         while(running){
             System.out.println("Choose one of the following options: ");
@@ -30,7 +31,7 @@ public class MainMenu {
                 case 'B' -> totalBalance();
                 case 'L' -> displayLedgerScreen();
                 case 'X' -> {running = false;
-                    System.out.println("Closing the application");
+                    System.out.println("Closing the application. Goodbye!");
                 }
                 default -> System.out.println("Invalid character. Please try again");
             }
@@ -144,6 +145,7 @@ public class MainMenu {
     }
     public static void displayAllEntries(){
         ArrayList<Transactions> list = new ArrayList<>();
+        System.out.println("All entries: ");
         try {
             BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
@@ -168,6 +170,7 @@ public class MainMenu {
     }
     public static void deposits(){
         ArrayList<Transactions> list = new ArrayList<>();
+        System.out.println("Deposits: ");
         try{
             BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
@@ -193,6 +196,7 @@ public class MainMenu {
     }
     public static void negativeEntries(){
         ArrayList<Transactions> list = new ArrayList<>();
+        System.out.println("Payments: ");
         try{
             BufferedReader reader = new BufferedReader(new FileReader(transactionsFile));
             String line;
