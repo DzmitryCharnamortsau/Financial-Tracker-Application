@@ -44,6 +44,10 @@ public class MainMenu {
         System.out.print("Enter vendor: ");
         String vendor = scanner.nextLine();
         System.out.print("Enter amount: ");
+        while (!scanner.hasNextDouble()) {
+            System.out.println("Invalid input! Please enter a numeric value.");
+            scanner.next();
+        }
         double amount = scanner.nextDouble();
         scanner.nextLine();
         LocalDate date = LocalDate.now();
@@ -73,6 +77,10 @@ public class MainMenu {
         System.out.print("Enter vendor: ");
         String vendor = scanner.nextLine();
         System.out.print("Enter amount: ");
+        while (!scanner.hasNextDouble()) {
+            System.out.println("Invalid input! Please enter a numeric value.");
+            scanner.next();
+        }
         double amount = scanner.nextDouble();
         scanner.nextLine();
         if (amount>0){
