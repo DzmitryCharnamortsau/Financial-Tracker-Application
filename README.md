@@ -37,11 +37,11 @@ A transactions.csv file is created automatically on your first entry.
 
 ## How it works
 Transactions are stored one per line, pipe-delimited:
-
+```
 date|time|description|vendor|amount
 2025-10-16|14:32:05|Paycheck|Acme Corp|1500.00
 2025-10-16|18:05:41|Groceries|Whole Foods|-84.27
-
+```
 Deposits are stored as positive amounts and payments as negative, so the balance is just the sum of all entries.
 
 ## Project Structure
